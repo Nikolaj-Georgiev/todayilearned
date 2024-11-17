@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { CATEGORIES } from './App';
-import { supabase } from './supabaseClient';
+import { supabase } from '../supabaseClient';
+
+import { CATEGORIES } from '../data/config';
 
 export function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState('');
