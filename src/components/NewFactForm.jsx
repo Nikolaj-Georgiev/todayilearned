@@ -3,6 +3,8 @@ import { supabase } from '../supabaseClient';
 
 import { CATEGORIES } from '../data/config';
 import { isFormValid, resetFormFields } from '../data/helpers';
+import { InputField } from './InputField';
+import { CategorySelect } from './CategorySelect';
 
 export function NewFactForm({ setFacts, setShowForm }) {
   const [formData, setFormData] = useState({
@@ -61,7 +63,7 @@ export function NewFactForm({ setFacts, setShowForm }) {
       className='fact-form'
       onSubmit={handleSubmit}
     >
-      <input
+      <InputField
         type='text'
         name='text'
         placeholder='Write your fact here! 200 characters max.'
@@ -71,7 +73,7 @@ export function NewFactForm({ setFacts, setShowForm }) {
         disabled={isUploading}
       />
       <span>{200 - textLength}</span>
-      <input
+      <InputField
         type='text'
         name='source'
         placeholder='(http/https)://example.com/...'
@@ -79,22 +81,12 @@ export function NewFactForm({ setFacts, setShowForm }) {
         onChange={handleInputChange}
         disabled={isUploading}
       />
-      <select
+      <CategorySelect
         name='category'
         value={formData.category}
         onChange={handleInputChange}
         disabled={isUploading}
-      >
-        <option value=''>Choose category:</option>
-        {CATEGORIES.map((cat) => (
-          <option
-            key={cat.name}
-            value={cat.name}
-          >
-            {cat.name.toUpperCase()}
-          </option>
-        ))}
-      </select>
+      />
       <button
         className='btn btn-large'
         disabled={isUploading}
