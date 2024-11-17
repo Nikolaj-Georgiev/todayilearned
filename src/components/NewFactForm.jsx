@@ -5,6 +5,7 @@ import { CATEGORIES } from '../data/config';
 import { isFormValid, resetFormFields } from '../data/helpers';
 import { InputField } from './InputField';
 import { CategorySelect } from './CategorySelect';
+import { Button } from './Button';
 
 export function NewFactForm({ setFacts, setShowForm }) {
   const [formData, setFormData] = useState({
@@ -87,12 +88,12 @@ export function NewFactForm({ setFacts, setShowForm }) {
         onChange={handleInputChange}
         disabled={isUploading}
       />
-      <button
+      <Button
         className='btn btn-large'
         disabled={isUploading}
       >
         Post
-      </button>
+      </Button>
     </form>
   );
 }

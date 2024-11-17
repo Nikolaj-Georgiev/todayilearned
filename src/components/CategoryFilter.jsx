@@ -1,30 +1,32 @@
 import { CATEGORIES } from '../data/config';
+import { Button } from './Button';
+import { ListItem } from './ListItem';
 
 export function CategoryFilter({ setCurrentCategory }) {
   return (
     <aside>
       <ul>
-        <li className='category'>
-          <button
+        <ListItem className='category'>
+          <Button
             className='btn btn-all-categories'
             onClick={() => setCurrentCategory('all')}
           >
             All
-          </button>
-        </li>
+          </Button>
+        </ListItem>
         {CATEGORIES.map((cat) => (
-          <li
+          <ListItem
             key={cat.name}
             className='category'
           >
-            <button
+            <Button
               className='btn btn-category'
               style={{ backgroundColor: cat.color }}
               onClick={() => setCurrentCategory(cat.name)}
             >
               {cat.name}
-            </button>
-          </li>
+            </Button>
+          </ListItem>
         ))}
       </ul>
     </aside>
