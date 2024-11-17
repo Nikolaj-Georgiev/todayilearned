@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
 import { CATEGORIES } from '../data/config';
+import { ListItem } from './ListItem';
 
 export function Fact({ fact, setFacts }) {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -24,7 +25,7 @@ export function Fact({ fact, setFacts }) {
   }
 
   return (
-    <li className='fact'>
+    <ListItem className='fact'>
       <p>
         {isDisputed ? <span className='disputed'>[📛DISPUTED]</span> : null}
         {fact.text}
@@ -65,6 +66,6 @@ export function Fact({ fact, setFacts }) {
           ⛔️ {fact.votesFalse}
         </button>
       </div>
-    </li>
+    </ListItem>
   );
 }
