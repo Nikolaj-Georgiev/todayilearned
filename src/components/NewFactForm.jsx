@@ -2,49 +2,60 @@ import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
 import { CATEGORIES } from '../data/config';
+import { isFormValid, resetFormFields } from '../data/helpers';
 
 export function NewFactForm({ setFacts, setShowForm }) {
-  const [text, setText] = useState('');
-  const [source, setSource] = useState('');
-  const [category, setCategory] = useState('');
+  const [formData, setFormData] = useState({
+    text: '',
+    source: '',
+    category: '',
+  });
   const [isUploading, setIsUploading] = useState(false);
-  const textLength = text.length;
+  const textLength = formData.text.length;
 
   async function handleSubmit(e) {
-    // 1. Prevent browser reload
     e.preventDefault();
 
-    // 2. Check if data is valid. If so, create new fact
-    if (text && isValidHttpUrl(source) && category && textLength <= 200) {
-      // 3. Create a new fact object
-      // const newFact = {
-      //   id: Math.round(Math.random() * 10000000),
-      //   text,
-      //   source,
-      //   category,
-      //   votesInteresting: 0,
-      //   votesMindblowing: 0,
-      //   votesFalse: 0,
-      //   createdIn: new Date().getFullYear(),
-      // };
-
-      // 3. Upload fact to Supabase and receive the new fact object
+    if (isFormValid(formData)) {
       setIsUploading(true);
-      const { data: newFact, error } = await supabase
-        .from('facts')
-        .insert([{ text, source, category }])
-        .select();
-      setIsUploading(false);
-      // 4. Add the new fact to the UI: add the fact to state
-      if (!error) setFacts((facts) => [newFact[0], ...facts]);
-      // 5. Reset input fields
-      setText('');
-      setSource('');
-      setCategory('');
-      // 6. close the form
-      setShowForm(false);
+      try {
+        const { data: newFact, error } = await supabase
+          .from('facts')
+          .insert([
+            {
+              text: formData.text,
+              source: formData.source,
+              category: formData.category,
+            },
+          ])
+          .select();
+
+        setIsUploading(false);
+
+        if (!error) {
+          setFacts((facts) => [newFact[0], ...facts]);
+          resetFormFields(setFormData);
+          setShowForm(false);
+        } else {
+          alert('There was a problem adding the fact.');
+        }
+      } catch (err) {
+        setIsUploading(false);
+        alert('An unexpected error occurred.');
+      }
+    } else {
+      console.log('Form is invalid');
     }
   }
+
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+
   return (
     <form
       className='fact-form'
@@ -52,22 +63,26 @@ export function NewFactForm({ setFacts, setShowForm }) {
     >
       <input
         type='text'
-        placeholder='Share a fact with the world...'
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        name='text'
+        placeholder='Write your fact here! 200 characters max.'
+        value={formData.text}
+        // onChange={(e) => setText(e.target.value)}
+        onChange={handleInputChange}
         disabled={isUploading}
       />
       <span>{200 - textLength}</span>
       <input
         type='text'
-        placeholder='Trustworthy source...'
-        value={source}
-        onChange={(e) => setSource(e.target.value)}
+        name='source'
+        placeholder='(http/https)://example.com/...'
+        value={formData.source}
+        onChange={handleInputChange}
         disabled={isUploading}
       />
       <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        name='category'
+        value={formData.category}
+        onChange={handleInputChange}
         disabled={isUploading}
       >
         <option value=''>Choose category:</option>
@@ -88,16 +103,4 @@ export function NewFactForm({ setFacts, setShowForm }) {
       </button>
     </form>
   );
-}
-
-function isValidHttpUrl(string) {
-  let url;
-
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-
-  return url.protocol === 'http:' || url.protocol === 'https:';
 }

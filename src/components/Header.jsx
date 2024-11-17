@@ -1,5 +1,5 @@
 export function Header({ showForm, setShowForm }) {
-  const appTitle = 'Today I Learned';
+  const appTitle = 'Facts';
 
   return (
     <header className='header'>
